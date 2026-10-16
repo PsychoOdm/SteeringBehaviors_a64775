@@ -44,11 +44,11 @@ public class Bot : MonoBehaviour
     }
 
     void Evade()
-        {
-            Vector3 targetDir = target.transform.position - this.transform.position;
-             float lookAhead = targetDir.magnitude / (agent.speed + ds.currentSpeed);
-            Flee(target.transform.position + target.transform.forward * lookAhead);
-        }
+    {
+        Vector3 targetDir = target.transform.position - this.transform.position;
+        float lookAhead = targetDir.magnitude / (agent.speed + ds.currentSpeed);
+        Flee(target.transform.position + target.transform.forward * lookAhead);
+    }
     
     Vector3 wanderTarget = Vector3.zero;
     void Wander()
@@ -66,9 +66,29 @@ public class Bot : MonoBehaviour
         Seek(targetWorld);
     }
 
+    void Hide()
+    {
+        float dist = Mathf.Infinity;
+        Vector3 chosenSpot = Vector3.zero;
+
+        GameObject[] hidingSpots = World.Instance.GetHidingSpots();
+        for(int i = 0; i < hidingSpots.Length; i++)
+        {
+            Vector3 hideDir = hidingSpots[i].transform.position - target.transform.position;
+            Vector3 hidePos = hidingSpots[i].transform.position + hideDir.normalized * 10;
+
+            if (Vector3.Distance(this.transform.position, hidePos) < dist)
+            {
+                chosenSpot = hidePos;
+                dist = Vector3.Distance(this.transform.position, hidePos);
+            }
+        }
+        Seek(chosenSpot);
+    }
+
     // Update is called once per frame
     void Update()
     {
-        Wander();
+        Hide();
     }
 }
