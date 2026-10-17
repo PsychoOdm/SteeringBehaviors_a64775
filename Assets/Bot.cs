@@ -1,4 +1,3 @@
-using UnityEditor.Build;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -140,7 +139,7 @@ public class Bot : MonoBehaviour {
         return false;
     }
 
-    bool TargetCanSeeMe() {
+    bool CanSeeMe() {
 
         Vector3 rayToTarget = this.transform.position - target.transform.position;
         float lookAngle = Vector3.Angle(target.transform.forward, rayToTarget);
@@ -157,7 +156,13 @@ public class Bot : MonoBehaviour {
         coolDown = false;
     }
 
-        void Update() {
+    bool TargetInRange() {
+
+        if (Vector3.Distance(this.transform.position, target.transform.position) < 10.0f) return true;
+        return false;
+    }
+
+    void Update() {
 
         // Seek(target.transform.position);
         // Flee(target.transform.position);
@@ -169,7 +174,11 @@ public class Bot : MonoBehaviour {
 
         if (!coolDown) {
 
-             if (CanSeeTarget() && TargetCanSeeMe()) {
+            if (!TargetInRange()) {
+
+                Wander();
+            }
+            else if (CanSeeTarget() && CanSeeMe()) {
 
                 CleverHide();
                 coolDown = true;
